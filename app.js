@@ -13,15 +13,23 @@ const excel = excelToJson({
     G: 'price',
     H: 'category'
   }
+  // header: {
+  //   rows: 1
+  // }
 })
 
 const products = excel[Object.keys(excel)[0]]
 
-// const photoNames = fs.readdirSync('./photos')
-// photoNames.forEach(n => {
-//   const name = n.replace(/\s/g, '').replace(/-/g, '').replace(/'/g, '')
-//   fs.renameSync(`./photos/${n}`, `./photos/${name}`)
-// })
+const photoNames = fs.readdirSync('./photos')
+photoNames.forEach(n => {
+  const name = n
+    .replace(/\s/g, '')
+    .replace(/-/g, '')
+    .replace(/'/g, '')
+    .replace(/\//g, '')
+    .toLowerCase()
+  fs.renameSync(`./photos/${n}`, `./photos/${name}`)
+})
 
 const result = products.map(p => {
   const now = new Date()
@@ -30,7 +38,10 @@ const result = products.map(p => {
     .replace(/\s/g, '')
     .replace(/-/g, '')
     .replace(/'/g, '')
+    .replace(/\//g, '')
+    .toLowerCase()
     .split(',')
+
   p.sizes = p.sizes
     .toLowerCase()
     .replace(/ us/gi, '')
@@ -39,13 +50,13 @@ const result = products.map(p => {
 
   p.price = parseInt(p.price.toString().replace(/\s/g, ''))
   p.category = p.category === 'wear' ? 'clothes' : p.category
+  p.category = p.category === 'kids' ? 'childish' : p.category
   p.createdAt = {
     $date: now
   }
   p.updateAt = {
     $date: now
   }
-  console.log(p)
   return p
 })
 
